@@ -1,0 +1,559 @@
+{
+  "name": "Asistente RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId }}"
+      },
+      "id": "ad8134de-ba8e-4eee-88de-959340f28ddc",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        600
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "oXPeNQm2x0iFLaQ8",
+          "name": "Postgres n8nDemo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:7b-instruct-q4_K_M",
+        "options": {
+          "frequencyPenalty": 0.2,
+          "numCtx": 8192,
+          "repeatPenalty": 1.2
+        }
+      },
+      "id": "244378c0-d977-457f-be01-7ffb9507f906",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        200,
+        320
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "pOHlh1inXqyjSjgR",
+          "name": "Ollama Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:latest",
+        "options": {}
+      },
+      "id": "4831d27f-0fdf-42a1-a7e2-2da96d961cfb",
+      "name": "Ollama Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        800,
+        820
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "pOHlh1inXqyjSjgR",
+          "name": "Ollama Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "id": "1c03738b-4280-4419-99e8-9eadfd75bfc0",
+      "name": "Embeddings Ollama",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        480,
+        940
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "pOHlh1inXqyjSjgR",
+          "name": "Ollama Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Local RAG AI Agent with Chat Interface",
+        "height": 527,
+        "width": 1569
+      },
+      "id": "12f04720-9594-41b9-86de-2f71e71c80bb",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Agent Tools for Local RAG",
+        "height": 528.85546469693,
+        "width": 583.4552380860637,
+        "color": 4
+      },
+      "id": "31492492-b823-4e55-9096-b0934138bba0",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        380,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "nutricion",
+          "mode": "list",
+          "cachedResultName": "nutricion"
+        },
+        "options": {}
+      },
+      "id": "3a7ca127-cde4-47f7-b166-3a7abbc17d42",
+      "name": "Qdrant Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1,
+      "position": [
+        400,
+        800
+      ],
+      "credentials": {
+        "qdrantApi": {
+          "id": "NoeJdb1PG2Vvu8jV",
+          "name": "QdrantApi local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "Eres un asistente experto en nutrición y dietas. Tienes acceso a una base de conocimiento interna con información detallada. Siempre que el usuario haga una pregunta sobre dietas, nutrientes o condiciones de salud relacionadas con la nutrición, debes consultar tu base de conocimiento para encontrar la respuesta más precisa.\nTu propósito es responder preguntas sobre temas de salud y nutrición usando la información de tu base de datos. Utiliza tus herramientas de búsqueda para encontrar datos relevantes antes de responder.",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "ed70348a-69f1-43ea-aad9-5b80d1de7733",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        220,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "75ebfdef-c8e2-4c3e-b716-1479d0cc2a73",
+              "name": "chatInput",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "59b7a20f-0626-4861-93e2-015d430c266e",
+              "name": "sessionId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0a7d4c70-b992-4a28-b130-e840bf7e29fb",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        40,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        120
+      ],
+      "id": "ed9ff8ef-5d43-4f7f-a2f2-b925ef0ac061",
+      "name": "Telegram Trigger",
+      "webhookId": "07f12c73-68dc-43c0-b4dc-2170cd7247f2",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdPPA5G6PEG15NcC",
+          "name": "Telegram Asistente personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1240,
+        120
+      ],
+      "id": "d65da303-d27b-41ff-8778-b4ae5fa90447",
+      "name": "Telegram",
+      "webhookId": "762969aa-eb8e-4c89-b001-3366f5174d87",
+      "credentials": {
+        "telegramApi": {
+          "id": "DdPPA5G6PEG15NcC",
+          "name": "Telegram Asistente personal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gemma3:4b-it-q8_0",
+        "options": {
+          "frequencyPenalty": 0.2,
+          "numCtx": 8192,
+          "repeatPenalty": 1.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        960,
+        320
+      ],
+      "id": "84df630a-6f05-48cf-91ee-ef409424d170",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "pOHlh1inXqyjSjgR",
+          "name": "Ollama Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un experto en presentación de texto para mensajes de Telegram en formato Markdown (Legacy). Recibes texto completamente limpio y sin formato de un procesador previo. Tu **única y específica tarea** es aplicar el formato final y añadir emojis para que el mensaje sea atractivo y compatible con Telegram.  Sigue estas reglas **estrictamente**:  1.  **Aplicar Formato en Markdown (Legacy):**     * Aplica **negritas** usando el símbolo de asterisco simple: `*texto en negrita*`. Úsalas para destacar títulos, subtítulos, puntos clave o cualquier sección que necesite énfasis en el texto limpio que recibes.     * Aplica **cursiva** usando el símbolo de guion bajo simple: `_texto en cursiva_`.     * Mantén los saltos de línea originales del texto limpio y añade saltos de línea adicionales (líneas en blanco `\\n\\n`) para separar párrafos y mejorar la legibilidad general.     * Las listas con `-` o `*` al principio de línea seguidas de un espacio (si el agente limpiador las mantuvo) generalmente funcionan bien en este modo.     * **¡NO AÑADAS NI USES NINGUNA OTRA SINTAXIS DE FORMATO!** Esto incluye NINGUNA etiqueta HTML (`<b>`, `<i>`, `<br>`, etc.) y NINGUNA otra sintaxis de Markdown (MarkdownV2 como `**`, `__`, `~~`, `||`, encabezados `#`, `> `, ```, `[link](url)`, etc.). Limítate a usar `*` para negrita y `_` para cursiva.  2.  **Añade Emojis Geniales y Relevantes:**     * Incorpora de forma natural y apropiada emojis que sean geniales y estén relacionados con el contexto de la nutrición (ej: 🍎🥦🥕💧🥛☀️🏃‍♀️💪😋). Distribúyelos a lo largo del texto donde tengan sentido para complementar el mensaje, pero no abuses.  3.  **Sé Conciso y Directo:**     * Presenta la información de la manera más clara y directa posible. Evita la redundancia innecesaria para ayudar a mantener el mensaje lo más corto posible dentro de una única salida formateada.  4.  **Mantén el Contenido**     * No añadas nueva información ni alteres el significado o contenido del texto limpio que recibes. Tu salida debe ser **únicamente** el texto **formateado en Markdown (Legacy)**, con los emojis añadidos, y listo para enviar a Telegram. No incluyas ninguna otra introducción, conclusión o texto adicional."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        920,
+        120
+      ],
+      "id": "4fc9fad9-91ec-425a-8d78-54799da75a22",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Texto a limpiar:** {{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un procesador de texto experto cuya única función es limpiar texto de marcas de formato innecesarias.\n\nRecibes texto generado por otro agente de IA que puede contener caracteres o símbolos que se usaron para formato en otro contexto, como de Markdown o HTML. Estos símbolos interfieren con el formato final.\n\nTu tarea es tomar el texto que recibes y generar una versión **completamente limpia y sin formato**. Debes eliminar específicamente las marcas que podrían causar problemas en otros sistemas de formato de mensajes.\n\nSigue estas reglas **estrictamente**:\n\n1.  Elimina **TODAS** las marcas de negrita, cursiva, encabezado o formato similar de Markdown, sin dejar rastro. Esto incluye:\n    * Asteriscos dobles (`**`)\n    * Asteriscos simples (`*`) si no están formando parte de una lista (al principio de línea con espacio).\n    * Guiones bajos dobles (`__`)\n    * Guiones bajos simples (`_`) si no están formando parte de una lista.\n    * Símbolos de encabezado (`#`, `##`, `###`, etc.)\n    * Backticks (`` ` ``) usados para código.\n    * Símbolos de cita (`> `)\n    * Símbolos de lista (`-` o `*` seguidos de espacio) - **¡Cuidado aquí!** Si quieres preservar las listas como guiones simples, podrías ajustar esta regla. Si solo quieres texto plano, elimínalos. Asumamos que quieres texto plano, así que elimínalos.\n2.  Elimina **TODAS** las etiquetas de formato HTML (ej: `<b>`, `</b>`, `<i>`, `</i>`, `<br>`, `<p>`, `<strong>`, `</em>`, etc.).\n3.  Elimina **cualquier** barra invertida (`\\`) que parezca haber sido usada para escapar caracteres.\n4.  **Mantén el texto original intacto** en cuanto a su contenido, palabras y significado. No añadas ni quites información (excepto las marcas de formato y símbolos listados arriba).\n5.  **Preserva los saltos de línea** donde son apropiados para separar párrafos. Elimina múltiples saltos de línea consecutivos que excedan dos.\n6.  **Preserva la puntuación básica** (puntos `.`, comas `,`, signos de interrogación `?`, exclamación `!`, dos puntos `:`, punto y coma `;`, paréntesis `()`, guiones `-` que no sean de lista, etc.) a menos que formen parte de una marca de formato identificada arriba.\n7.  Tu salida debe ser **ÚNICAMENTE** el texto **completamente limpio y sin formato**, listo para ser procesado por el siguiente paso. No añadas introducciones, conclusiones, explicaciones, ni nada extra."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        580,
+        120
+      ],
+      "id": "b7e45b1f-3304-47fb-8e18-7b0e7d3fc65f",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": "gemma3:4b-it-q8_0",
+        "options": {
+          "numCtx": 4096
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        680,
+        340
+      ],
+      "id": "9c4f0569-8307-41e6-b9df-d21c5b811877",
+      "name": "Ollama Chat Model2",
+      "credentials": {
+        "ollamaApi": {
+          "id": "pOHlh1inXqyjSjgR",
+          "name": "Ollama Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "documents",
+        "description": "Útil para encontrar respuestas a preguntas específicas sobre dietas, nutrientes, condiciones de salud relacionadas con la nutrición, etc., utilizando la base de conocimientos interna.",
+        "topK": 8
+      },
+      "id": "967cae4a-b318-47e7-ac7d-3ae42a66df29",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        580,
+        660
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -140,
+        360
+      ],
+      "id": "a6ca79a5-52ba-49f4-bce3-ccae8fb90491",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash-8b-exp-0924",
+        "options": {
+          "temperature": 0.4,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        20,
+        400
+      ],
+      "id": "870d4646-de9d-4a70-b000-61b8e472e42c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YU8BcofQCU2G0N9a",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        340
+      ],
+      "id": "696392fe-093e-4ec6-bb3a-425abc000e05",
+      "name": "Simple Memory1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4518ae18-abc2-46f4-8d6c-2deb384bae04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a5c0e25969a47fdd97f4fe8fc770072a656bf1c9b2fe59f08577985b8eb28da4"
+  },
+  "id": "kAB9UmKBW0jI2yb5",
+  "tags": []
+}
