@@ -68,6 +68,30 @@ Para actualizar la información de la base de datos RAG:
 
 **Nota importante**: Los archivos DEBEN estar ubicados en la ruta exacta `/n8n/backup/` y sus subcarpetas correspondientes para que el sistema funcione correctamente. Cualquier cambio en la estructura de carpetas requerirá actualizar las configuraciones de los nodos en los flujos de trabajo.
 
+## Ejemplos de Preguntas
+
+El sistema está diseñado para responder a diferentes tipos de preguntas relacionadas con la nutrición:
+
+### Preguntas Específicas
+- "¿Cuánta proteína necesito si hago entrenamiento de fuerza?"
+- "¿Cuál es la cantidad diaria recomendada de vitamina D?"
+- "¿Qué alimentos son ricos en hierro?"
+
+### Preguntas Comparativas
+- "¿Qué dieta es mejor para la salud del corazón, Mediterránea o DASH?"
+- "¿Cuál es la diferencia entre carbohidratos simples y complejos?"
+- "¿Qué es mejor para la recuperación muscular, proteína de suero o caseína?"
+
+### Preguntas sobre Relaciones
+- "¿Cómo afecta la hora de la cena a mi sueño?"
+- "¿Qué relación hay entre el consumo de azúcar y la energía?"
+- "¿Cómo influye la hidratación en el rendimiento deportivo?"
+
+### Preguntas Amplias
+- "¿Qué consejos nutricionales me das para mejorar mi rendimiento deportivo?"
+- "¿Cómo puedo mejorar mi alimentación para tener más energía?"
+- "¿Qué cambios en mi dieta pueden ayudarme a dormir mejor?"
+
 ## Requisitos del Sistema
 
 - n8n instalado y configurado
